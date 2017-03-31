@@ -1,0 +1,859 @@
+<!DOCTYPE HTML>
+<head>
+  <title>Tic Tac Toe</title>
+
+<style type="text/css">
+
+body {
+  background-color: #DDDDDD; /*for browsers that do not support gradient*/
+  background: radial-gradient(#DDDDDD, #999999, #666666);
+}
+
+.container {
+  /*height: 500px;*/
+  width: 380px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 300%;
+}
+
+#startup, #startup-one, #startup-two {
+  font-size: 150%;
+  height: 439px;
+}
+
+#one-player, #two-player, .back, .player-x, .player-o, #reset {
+  cursor: pointer;
+}
+
+#easy, #medium, #hard, #impossible {
+  cursor: default;
+}
+
+ul {
+  list-style: none;
+}
+
+#diff-menu {
+  float: left;
+  position: relative;
+  text-align: left;
+  margin-top: -20px;
+  margin-left: 5px;
+}
+
+.diff-option {
+  position: relative;
+  opacity: 0;
+}
+
+.unfinished {
+  position: relative;
+  opacity: 0;
+}
+
+.player-x, .player-o {
+  font-size: 300%;
+  font-family: monospace;
+}
+
+.padding {
+  padding: 0 10px;
+}
+
+#startup-one, #startup-two {
+  display: none;
+  height: 439px;
+}
+
+#who-won {
+  height: 30px;
+  width: 300px;
+  text-align: center;
+  background: rgba(0,0,0,0);
+  color: rgba(0,0,0,0);
+}
+
+#whos-play {
+  float: left;
+  font-size: 140%;
+  color: rgba(0,0,0,1);
+}
+
+#board-container {
+  display: none;
+}
+
+#board {
+  font-size: 500%;
+  font-family: monospace;
+  height: 350px;
+  width: 300px;
+  margin: 20px 0 20px 35px;
+  float: left;
+}
+
+.spot {
+  height: 50px;
+  width: 50px;
+  padding: 0 20px;
+  margin: 0 -20px;
+  cursor: pointer;
+  /*color: #000; /* For IE8 and below */
+  color: rgba(0, 0, 0, 0);
+}
+
+#top-left {
+  border-bottom: 5px black solid;
+  border-right: 5px black solid;
+}
+
+#top-middle {
+  border-bottom: 5px black solid;
+  border-right: 5px black solid;
+  border-left: 5px black solid;
+}
+
+#top-right {
+  border-bottom: 5px black solid;
+  border-left: 5px black solid;
+}
+
+#mid-left {
+  border-bottom: 5px black solid;
+  border-right: 5px black solid;
+  border-top: 5px black solid;
+}
+
+#mid-middle {
+  border-bottom: 5px black solid;
+  border-right: 5px black solid;
+  border-left: 5px black solid;
+  border-top: 5px black solid;
+}
+
+#mid-right {
+  border-bottom: 5px black solid;
+  border-left: 5px black solid;
+  border-top: 5px black solid;
+}
+
+#bottom-left {
+  border-right: 5px black solid;
+  border-top: 5px black solid;
+}
+
+#bottom-middle {
+  border-right: 5px black solid;
+  border-left: 5px black solid;
+  border-top: 5px black solid;
+}
+
+#bottom-right {
+  border-left: 5px black solid;
+  border-top: 5px black solid;
+}
+
+#game-mechanics {
+  display: none;
+  width: 100px;
+  float: left;
+  padding-top: 180px;
+}
+
+#footer {
+  text-align: center;
+}
+
+#footer a {
+  text-decoration: none;
+  color: black;
+}
+
+</style>
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<!--jQuery UI-->
+	<!--<link href="jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <h1>Tic Tac Toe</h1>
+  
+  <div id="startup">
+    What kind of game would
+      you like to play?
+    <p>
+      <span id="one-player">One Player</span>
+      <span class="padding"></span>
+      <span id="two-player">Two Player</span>
+      <ul id="diff-menu">
+        <li id='easy' class='diff-option'>Easy</li>
+        <li id='medium' class='diff-option'>Medium</li>
+        <li title="Under construction" id='hard' class='unfinished'>Very Hard</li>
+        <li title="Coming soon!" id='impossible' class='diff-option'>Impossible</li>
+    </ul>
+    </p>
+  </div>
+  <div id="startup-one"><!-- one player selection -->
+    Would you like to be X or O?
+    <p>
+      <span class="player-x">X</span>
+      <span class="padding"></span>
+      <span class="padding"></span>
+      <span class="padding"></span>
+      <span class="player-o">O</span>
+    </p>
+    <p class="back">Back</p>
+  </div>
+  <div id="startup-two"><!-- two player selection -->
+    Player 1: would you like to be X or O?
+    <p>
+      <span class="player-x">X</span>
+      <span class="padding"></span>
+      <span class="padding"></span>
+      <span class="padding"></span>
+      <span class="player-o">O</span>
+    </p>
+    <p class="back">Back</p>
+  </div>
+  
+  <div id="board-container">
+    <div id="who-won"></div>
+    <div id="whos-play"></div>
+    <div style="clear: both;"></div>
+    <div id="board">
+    <div id="top-row">
+      <span id="top-left" class="spot">U</span>
+      <span id="top-middle" class="spot">U</span>
+      <span id="top-right" class="spot">U</span>
+    </div>
+    <div id="mid-row">
+      <span id="mid-left" class="spot">U</span>
+      <span id="mid-middle" class="spot">U</span>
+      <span id="mid-right" class="spot">U</span>
+    </div>
+    <div id="bottom-row">
+      <span id="bottom-left" class="spot">U</span>
+      <span id="bottom-middle" class="spot">U</span>
+      <span id="bottom-right" class="spot">U</span>
+    </div>
+  </div><!-- end of board -->
+    
+  </div><!-- end of board container -->  
+</div><!-- end of container -->
+
+<div id="game-mechanics">
+  <div id="twoPlayerMode">
+    <div>Player 1: <span id="player1score">0</span></div>
+    <div>Player 2: <span id="player2score">0</span></div>
+  </div>
+  <div id="onePlayerMode">
+    <div>Player: <span id="playerScore">0</span></div>
+    <div>Computer: <span id="compyScore">0</span></div>
+  </div>
+  <div id="reset">Full Reset</div>
+</div><!-- end of game-mechanics -->
+<div style="clear: both;"></div>
+
+<div id="footer">Coded by <a href="https://github.com/brokentriathlete">BT</a></div>
+
+<script type="text/javascript">
+
+// Perhaps a large-scale object oriented way to avoid globals, but first a running version
+var playerToken = ''; // X or O, depending on what token is played next
+var playerOneToken = ''; // to keep track of who h
+var numberOfMoves = 0; // count number of turns played
+var whosPlay = 0; // set randomly to decide player order each game
+var compyPlayed = false; // set to true after compy plays its turn
+var difficulty; // keep track of difficulty level user wants to face (if 1 player mode)
+var numberOfPlayers = 0; // set to 1 if user wants to play compy, or 2
+var gameEnd = false; // set to true if a player wins or game ends in draw
+var gameBoard = ['#top-left', '#top-middle', '#top-right', '#mid-left', '#mid-middle', '#mid-right', '#bottom-left', '#bottom-middle', '#bottom-right']; // for use in clearing the board animated after a game is over
+var possibleTiles = [0,1,2,3,4,5,6,7,8]; // to allow compy play
+var menuDisplay = false; // true once menu difficulty is showing
+
+
+/* 
+ * make a toggle for the menu, so options cannot be click
+ * unless menu is down, and after down the menu cannot be
+ * re-dropped anymore. Also lighten 2 player mode with dark
+ * effect on hover
+*/
+
+// user chooses one player mode
+$("#one-player").click(function() {
+  if (!menuDisplay) {
+    // drop down menu for difficulty levels available
+    $('#impossible').animate({
+      top: '-90'
+    }, 1);
+    $('#hard').animate({
+      top: '-64'
+    }, 1);
+    $('#medium').animate({
+      top: '-38'
+    }, 1);
+    $('#easy').animate({
+      top: '-10'
+    }, 1, function() {
+      $('#impossible').animate({
+      top: '0',
+      opacity: 1
+    }, 250, function() {
+        $('#hard').animate({
+          top: '0',
+          opacity: 0.25
+        }, 250, function() {
+          $('#medium').animate({
+            top: '0',
+            opacity: 1
+          }, 250, function() {
+            $('#easy').animate({
+              top: '0',
+              opacity: 1
+            }, 250);
+          });
+        });
+      });
+    });
+    $('#easy').css('cursor', 'pointer');
+    $('#medium').css('cursor', 'pointer');
+    // $('#hard').css('cursor', 'pointer'); // no cursor since it's not implemented
+    $('#impossible').css('cursor', 'pointer');
+    numberOfPlayers = 1;
+    menuDisplay = true;
+  }
+});
+
+$(".diff-option").click(function(event) {
+  if (menuDisplay) { // only allow selecting if menu is down
+    difficulty = event.target.id;
+    $("#startup").hide(200);
+    $("#startup-one").show(200);
+    $("#twoPlayerMode").hide();
+    $("#onePlayerMode").show();
+  }
+});
+
+// user chooses two player mode
+$("#two-player").click(function() {
+  $("#startup").hide(200);
+  $("#startup-two").show(200);
+  $("#onePlayerMode").hide();
+  $("#twoPlayerMode").show();
+  numberOfPlayers = 2;
+});
+
+// user (1) wants to play X
+$(".player-x").click(function() {
+  $("#startup-one").hide(200);
+  $("#startup-two").hide(200);
+  $("#board-container").show();
+  playerToken = 'X';
+  playerOneToken = 'X';
+  if (true) { // change to picking difficulty if one player mode
+    gameSetup();
+  }
+});
+
+// user (1) wants to play O
+$(".player-o").click(function() {
+  $("#startup-one").hide(200);
+  $("#startup-two").hide(200);
+  $("#board-container").show();
+  playerToken = 'O';
+  playerOneToken = 'O';
+  gameSetup();
+});
+
+// user wants to go back to player selection
+$(".back").click(function() {
+  $("#startup-one").hide(200);
+  $("#startup-two").hide(200);
+  $("#startup").show(200);
+});
+
+function gameSetup() {
+  // display scores and reset button
+  $('#game-mechanics').show();
+  $('#board-container').animate({
+    opacity: 1
+  }, 1);
+  
+  numberOfMoves = 0; // to count the number of turns played
+  possibleTiles = [0,1,2,3,4,5,6,7,8]; // restart compy able to play on each tile
+  whosPlay = Math.floor(Math.random()*2);
+  console.log(whosPlay);
+  // if whosPlay = 0, player 2/compy goes first
+  // else, player 1 goes first
+  
+  if (numberOfPlayers == 2) {
+    if (whosPlay == 0) {
+      $("#whos-play").html("Player 2 turn!");
+      $("#whos-play").css("float", "right");
+      whosPlay = 1;
+      if (playerOneToken == 'X') {
+        playerToken = 'O';
+      } else {
+        playerToken = 'X';
+      }
+    } else {
+      $("#whos-play").html("Player 1 turn!");
+      $("#whos-play").css("float", "left");
+      whosPlay = 0;
+      if (playerOneToken == 'X') {
+        playerToken = 'X';
+      } else {
+        playerToken = 'O';
+      }
+    }
+  } else { // one player vs. compy
+    // setup impossible mode first as it is different from the rest
+    if (difficulty == 'impossible') {
+      // add more boards once working
+      
+      // computer gets first turn, set token according to (opposite of) user choice
+      if (playerOneToken == 'X') {
+        playerToken = 'O';
+      } else {
+        playerToken = 'X';
+      }
+      
+      // initial impossible board setup
+      $('#top-left').html(playerOneToken);
+      $('#top-left').css("color", "rgba(0,0,0,1)");
+      $('#mid-left').html(playerOneToken);
+      $('#mid-left').css("color", "rgba(0,0,0,1)");
+      $('#bottom-left').html(playerToken);
+      $('#bottom-left').css("color", "rgba(0,0,0,1)");
+      $('#mid-middle').html(playerToken);
+      $('#mid-middle').css("color", "rgba(0,0,0,1)");
+      $('#bottom-middle').html(playerToken);
+      $('#bottom-middle').css("color", "rgba(0,0,0,1)");
+      $('#mid-right').html(playerOneToken);
+      $('#mid-right').css("color", "rgba(0,0,0,1)");
+      numberOfMoves = 6;
+      // now regular call to gameplay to start
+    }
+    
+    if (whosPlay == 0) {
+      $("#whos-play").html("Compy turn!");
+      $("#whos-play").css("float", "right");
+      compyPlayed = false;
+      whosPlay = 1;
+      if (playerOneToken == 'X') {
+        playerToken = 'O';
+      } else {
+        playerToken = 'X';
+      }
+      
+      // do compy play, based on difficulty chosen above
+      if (difficulty == 'easy') {
+        setTimeout(function() {
+          easyCompy(); // cannot win on first move, so no need to check if this move won
+          turnTransition();
+        }, 5000);
+      } else if (difficulty == 'medium' || difficulty == 'impossible') {
+        setTimeout(function() {
+          mediumCompy(); // cannot win on first move, so no need to check
+          // gameEnd = checkWin(false); // true only if winning move was made
+          if (difficulty == 'impossible') { // compy does win on first move
+            // now fade tiles out and reset board
+            turnTransition();
+            fadeOut();
+            setTimeout(function() {
+              gameSetup(); // offset to happen after fadeOut() completes
+                           // not smooth because of turn transition...
+            }, 1500);
+          }
+          turnTransition(); // end of medium?
+        }, 2000);
+      }
+    } else { // user turn first
+      compyPlayed = true; // lets user play first turn
+      $("#whos-play").html("Your turn!");
+      $("#whos-play").css("float", "left");
+      whosPlay = 0;
+      if (playerOneToken == 'X') {
+        playerToken = 'X';
+      } else {
+        playerToken = 'O';
+      }
+    }
+  }
+}
+
+/******************************************************/
+// full reset if user clicks reset option during game */
+/******************************************************/
+$("#reset").click(function() {
+  // don't let user reset on compy turn, in case they are
+  // just trying to avoid compy making a winning move
+  if (compyPlayed) {
+    fadeOut();
+    gameEnd = true; // game is over
+    playerToken = '';
+    playerOneToken = '';
+    numberOfMoves = 0;
+    whosPlay = 0;
+    numberOfPlayers = 0;
+    compyPlayed = false;
+  
+    setTimeout(function() {
+      $("#board-container").animate({
+        opacity: 0
+      }, 1500);
+      // reset board to all unplayed tokens
+      $("#top-left").html("U");
+      $("#top-middle").html("U");
+      $("#top-right").html("U");
+      $("#mid-left").html("U");
+      $("#mid-middle").html("U");
+      $("#mid-right").html("U");
+      $("#bottom-left").html("U");
+      $("#bottom-middle").html("U");
+      $("#bottom-right").html("U");
+      // hide and reset scores
+      $("#game-mechanics").hide();
+      $("#player1score").html(0);
+      $("#player2score").html(0);
+      $("#playerScore").html(0);
+      $("#compyScore").html(0);
+    }, 1500);
+  
+    // load starting selection screen
+    setTimeout(function() {
+      $('.diff-option').css('opacity', '0');
+      $('.unfinished').css('opacity', '0');
+      menuDisplay = false;
+      $('#easy').css('cursor', 'default');
+      $('#medium').css('cursor', 'default');
+      // $('#hard').css('cursor', 'default'); // not until implemented
+      $('#impossible').css('cursor', 'default');
+      $("#startup").show();
+    }, 2950);
+  }
+});
+
+$(".spot").on('click', function(clickEvent) {
+  var compyWon = false; // true if computer wins
+  if ($(this).html() == 'U' && !gameEnd && (compyPlayed || numberOfPlayers == 2)) {
+    $(this).html(playerToken);
+    numberOfMoves++;
+    $(this).css("color", "rgba(0,0,0,1)");
+    // check if this play wins the game
+    gameEnd = checkWin(false); // returns true only if winning move was made
+    if (numberOfPlayers == 1 && !gameEnd) { // if CPU turn next
+      // do computer play, based on difficulty chosen above
+      compyPlayed = false; // false until computer has placed a token
+      setTimeout(function() {
+        if (difficulty == 'easy') {
+          easyCompy();
+          //turnTransition();
+        } else if (difficulty == 'medium' || difficulty == 'impossible') {
+          mediumCompy();
+          //turnTransition();
+        }
+        gameEnd = checkWin(false); // true only if winning move was made
+        if (gameEnd) { // compy won
+          // now fade tiles out and reset board
+          turnTransition();
+          fadeOut();
+          setTimeout(function() {
+              gameSetup(); // offset to happen after fadeOut() completes
+                           // not smooth because of turn transition...
+            }, 1250);
+        }
+      }, 1000);
+    }
+    // end of turn
+    if (gameEnd) { // user won
+      // now fade tiles out and reset board
+      turnTransition();
+      fadeOut();
+      gameSetup();
+    }
+  }
+});
+
+/*
+ * Easy CPU player, making its moves at random /
+ */
+function easyCompy() {
+  var possibleTilesBefore = possibleTiles.slice();
+  for (var tile=0; tile < possibleTilesBefore.length; tile++) {
+    var tileToTry = Math.floor(Math.random()*(possibleTiles.length));
+    if ($(gameBoard[possibleTiles[tileToTry]]).html() == 'U') { // tile free, play here
+      $(gameBoard[possibleTiles[tileToTry]]).html(playerToken);
+      numberOfMoves++;
+      $(gameBoard[possibleTiles[tileToTry]]).css("color", "rgba(0,0,0,1)");
+      possibleTiles.splice(possibleTiles.indexOf(possibleTiles[tileToTry]), 1); // we do not want to pick the same tile twice
+      compyPlayed = true;
+    } else {
+      // the random choice has been played by the user, so remove from future picks
+      possibleTiles.splice(possibleTiles.indexOf(possibleTiles[tileToTry]), 1); // we do not want to pick the same invalid tile twice
+    }
+    if (compyPlayed) {
+      tile = possibleTilesBefore.length; // do not allow the computer to play more than once per turn
+    }
+  }
+}
+
+/************************************************
+ * Medium CPU player, only smarter than easier
+ * in that it makes a winning move if available
+ * and will try to prevent user from winning if
+ * such a play is available 
+*************************************************/
+function mediumCompy() {
+  // search all possible piece for winning move, then make one
+  for (var i=0; i < gameBoard.length; i++ ) {
+    if ($(gameBoard[i]).html() == 'U' && !compyPlayed) {
+      // gameBoard[i] is unplayed and compy hasn't already played
+      // check if playing here will win
+      $(gameBoard[i]).html(playerToken);
+      var test = true;
+      if (checkWin(test)) {
+        // make the move
+        gameEnd = checkWin(!test);
+        $(gameBoard[i]).css('color', 'rgba(0,0,0,1)');
+        numberOfMoves++;
+        compyPlayed = true;
+      } else { // not a winning move, so remove from play
+        $(gameBoard[i]).html('U');
+      }
+      if (compyPlayed) { // successful move found, stop trying the others
+        j = gameBoard.length;
+      }
+    }
+  }
+  
+  // if we get here and compyPlayed is false, there was no winning move to make
+  // check to see if compy needs to make a move to prevent user from winning next round
+  if (!compyPlayed) {
+    // check to see if user has a winning move next turn
+    // if so, try to prevent it
+    for (var j=0; j < gameBoard.length; j++ ) {
+      if ($(gameBoard[j]).html() == 'U' && !compyPlayed) {
+        // gameBoard[i] is unplayed and compy hasn't played (i.e., won)
+        // check if playing here will win for user
+        $(gameBoard[j]).html(playerOneToken);
+        test = true;
+        gameEnd = checkWin(test);
+        if (gameEnd) {
+          // make the move with CPU token
+          $(gameBoard[j]).html(playerToken);
+          //turnTransition();
+          //gameEnd = checkWin(!test); // redundancy check, should always be false
+          $(gameBoard[j]).css('color', 'rgba(0,0,0,1)');
+          numberOfMoves++;
+          compyPlayed = true;
+        } else { // not a winning move, so remove from play
+          $(gameBoard[j]).html('U');
+        }
+      }
+      if (compyPlayed) { // successful move found, stop trying the others
+        j = gameBoard.length;
+      }
+    } // end of search for moves that 'need' to be made to not lose
+    
+  }
+  if (!compyPlayed) { // if still no move has been made, play random
+    easyCompy();
+  }
+}
+
+/*******************************************************
+ Very hard CPU opponent, searches through all possible
+ moves and picks one with the greatest chance of victory
+********************************************************/
+// ... to be added
+
+
+/***********
+ * Test all possible moves to see if a winning one exists.
+ * If a winning move exists, winning tiles are coloured red
+ * parameter test is for medium difficulty CPU that checks
+ * each possible play before making the official move.
+ * test = true means we do not color winning tiles red
+************/
+function checkWin(test) {
+  if (numberOfMoves > 4 || test) { // cannot win with 4 plays or less
+    var winningToken = ''; // if X wins, set to X, if O wins, set to O
+    var winTokens = ['X', 'O']; // could make this quicker since we know which token has just been placed...
+    // check if the board has been won by X or O
+    for (var i=0; i < winTokens.length; i++) {
+      if ($("#top-left").html() == winTokens[i] && $("#top-middle").html() == winTokens[i] & $("#top-right").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#top-left").css("color", "red");
+          $("#top-middle").css("color", "red");
+          $("#top-right").css("color", "red");
+        }
+      } else if ($("#mid-left").html() == winTokens[i] && $("#mid-middle").html() == winTokens[i] & $("#mid-right").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#mid-left").css("color", "red");
+          $("#mid-middle").css("color", "red");
+          $("#mid-right").css("color", "red");
+        }
+      } else if ($("#bottom-left").html() == winTokens[i] && $("#bottom-middle").html() == winTokens[i] & $("#bottom-right").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#bottom-left").css("color", "red");
+          $("#bottom-middle").css("color", "red");
+          $("#bottom-right").css("color", "red");
+        }
+      } else if ($("#top-left").html() == winTokens[i] && $("#mid-left").html() == winTokens[i] & $("#bottom-left").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#top-left").css("color", "red");
+          $("#mid-left").css("color", "red");
+          $("#bottom-left").css("color", "red");
+        }
+      } else if ($("#top-middle").html() == winTokens[i] && $("#mid-middle").html() == winTokens[i] & $("#bottom-middle").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#top-middle").css("color", "red");
+          $("#mid-middle").css("color", "red");
+          $("#bottom-middle").css("color", "red");
+        }
+      } else if ($("#top-right").html() == winTokens[i] && $("#mid-right").html() == winTokens[i] & $("#bottom-right").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#top-right").css("color", "red");
+          $("#mid-right").css("color", "red");
+          $("#bottom-right").css("color", "red");
+        }
+      } else if ($("#top-left").html() == winTokens[i] && $("#mid-middle").html() == winTokens[i] & $("#bottom-right").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#top-left").css("color", "red");
+          $("#mid-middle").css("color", "red");
+          $("#bottom-right").css("color", "red");
+        }
+      } else if ($("#top-right").html() == winTokens[i] && $("#mid-middle").html() == winTokens[i] & $("#bottom-left").html() == winTokens[i]) {
+        // winTokens[i] wins!
+        winningToken = winTokens[i];
+        if (!test) {
+          $("#top-right").css("color", "red");
+          $("#mid-middle").css("color", "red");
+          $("#bottom-left").css("color", "red");
+        }
+      }
+    } // end of for loop checking all winning possibilities
+    
+    
+    if (winningToken != '') { // a winning move was found
+      if (test) { // let test know the move wins
+        return true;
+      } else { // someone has won; display who and give match point
+        var whoWon = '';
+        if (winningToken == playerOneToken) { // player 1 wins
+          if (numberOfPlayers == 1) { // user beat compy
+            $("#playerScore").html(parseInt($("#playerScore").html()) + 1);
+            whoWon = 'You won!';
+          } else { // user beat player 2
+          $("#player1score").html(parseInt($("#player1score").html()) + 1);
+            whoWon = 'Player 1 wins!';
+          }
+        } else { // player 2 wins
+          if (numberOfPlayers == 1) { // compy beat user
+            $("#compyScore").html(parseInt($("#compyScore").html()) + 1);
+            whoWon = 'Compy wins!';
+          } else { // player 2 beat player 1
+            $("#player2score").html(parseInt($("#player2score").html()) + 1);
+            whoWon = 'Player 2 wins!';
+          }
+        } // end of selecting who won
+      
+        // display who won
+        $("#whos-play").css('color', 'rgba(0,0,0,0)');
+        $("#who-won").html(whoWon);
+        $("#who-won").css('color', 'rgba(0,0,0,1)');
+      
+        return true; // game over
+      }
+      
+    } else if (numberOfMoves == 9) { // no one has won but the board is full, so the game is a draw
+      $("#whos-play").css('color', 'rgba(0,0,0,0)');
+      $("#who-won").html("It's a draw!");
+      $("#who-won").css('color', 'rgba(0,0,0,1)');
+      
+      return true; // game over
+    }
+  } // no one has won, so game continues
+  
+  if (!test) {
+    // if function has not returned true, no one has won so swap to next player's turn
+    turnTransition();
+  }
+  return false; // and return that no one has won
+}
+  
+function fadeOut() {
+  for (var i=0; i < gameBoard.length; i++) {
+    if ($(gameBoard[i]).html() != 'U') { // played tile, so fade to blank then set to unplayed (U) for next game
+      $(gameBoard[i]).animate({
+        color: 'rgba(0,0,0,0)'
+      }, 1500, function() {
+        $(this).html('U'); // reset tile to unplayed (U)
+        gameEnd = false; // after pieces fade out, tiles playable again
+        // now reset messages
+        $("#whos-play").css('color', 'rgba(0,0,0,1)');
+        $("#who-won").css('color', 'rgba(0,0,0,0)');
+      });
+    }
+  }
+}
+
+function turnTransition() {
+  if (playerToken == 'X') {
+    playerToken = 'O';
+  } else {
+    playerToken = 'X';
+  }
+  if (numberOfPlayers == 2) {
+    if (whosPlay == 0) {
+      $("#whos-play").html("Player 2 turn!");
+      $("#whos-play").css("float", "right");
+      whosPlay = 1;
+    } else {
+      $("#whos-play").html("Player 1 turn!");
+      $("#whos-play").css("float", "left");
+      whosPlay = 0;
+    }
+  } else { // one player gave vs compy
+    if (whosPlay == 0) {
+      $("#whos-play").html("Compy turn!");
+      $("#whos-play").css("float", "right");
+      whosPlay = 1;
+    } else {
+      $("#whos-play").html("Your turn!");
+      $("#whos-play").css("float", "left");
+      whosPlay = 0;
+    }
+  }
+}
+
+</script>
+
+</body>
+</html>
